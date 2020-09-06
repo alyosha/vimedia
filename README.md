@@ -1,6 +1,6 @@
 ## vimedia                                                                             
-vimedia lets you control your media players from inside vim. You know, if you're really
-that lazy... 
+Control your media players from inside Vim, if you're really
+that lazy 😏
 
 ## Commands
 - `:Play`         => Begin playback from active media player
@@ -15,8 +15,8 @@ that lazy...
 - `:ActivePlayer` => Confirm active media player
 - `:ChangePlayer` => Select active media player from list of all running/supported options
 
-Please keep in mind that some media players have not fully implemented MPRIS
-yet and not all functionality may work with every player.
+Please keep in mind that some media players may not have implemented MPRIS
+fully/at all and available functionality can vary with each player.
 
 ## Coming soon
 - Seek forward/backwards
