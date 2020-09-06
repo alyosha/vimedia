@@ -3,9 +3,9 @@ if !has("python3")
     finish
 endif
 
-""if exists('g:vimedia_plugin_loaded')
-""    finish
-""endif
+if exists('g:vimedia_plugin_loaded')
+    finish
+endif
 
 "" Point to location of python code
 let s:plugin_root_dir = fnamemodify(resolve(expand('<sfile>:p')), ':h')
