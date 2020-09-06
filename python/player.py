@@ -25,6 +25,7 @@ class Player(Mpris):
         # Many players will simply restart the song if the position
         # is already past a certain point. We have a dedicated method
         # supporting restart, so make sure to actually go back here.
+        sleep(0.5)  # Need to sleep a bit to ensure new metadata has arrived.
         if self.get_title() == start_track:
             self.iface.Previous()
             return
