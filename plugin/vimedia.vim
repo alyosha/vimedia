@@ -117,11 +117,11 @@ fu! s:set_selected_player() abort
 endfu
 
 fu! s:mute() 
-  python3 vmd.selected_player.mute()
+  python3 vmd.adjust_volume_all(0.0)
 endfu
 
 fu! s:unmute() 
-  python3 vmd.selected_player.unmute()
+  python3 vmd.adjust_volume_all(1.0)
 endfu
 
 fu! s:quit()

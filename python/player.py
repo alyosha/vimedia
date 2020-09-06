@@ -47,8 +47,5 @@ class Player(Mpris):
     def get_metadata(self):
         return self.get_property('Metadata')
 
-    def mute(self):
-        self.set_property('Volume', dbus.Double(0.0))
-
-    def unmute(self):
-        self.set_property('Volume', dbus.Double(1.0))
+    def adjust_volume(self, value):
+        self.set_property('Volume', value)
