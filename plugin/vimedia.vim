@@ -41,7 +41,7 @@ command! -nargs=0 Mute call s:mute()
 command! -nargs=0 Unmute call s:unmute()
 command! -nargs=0 Quit call s:quit()
 command! -nargs=0 ActivePlayer call s:active_player()
-command! -nargs=0 ChangePlayer call s:present_player_options()
+command! -nargs=0 SelectPlayer call s:present_player_options()
 
 " *************************************************************************** "
 " ****************************   Functionality   **************************** " 

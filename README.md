@@ -13,7 +13,7 @@ that lazy 😏
 - `:Unmute`       => Unmute audio for all media players
 - `:Quit`         => Send quit signal to active media player
 - `:ActivePlayer` => Confirm active media player
-- `:ChangePlayer` => Select active media player from list of all running/supported options
+- `:SelectPlayer` => Select/change active media player from list of all running options
 
 Please keep in mind that some media players may not have implemented MPRIS
 fully/at all and available functionality can vary with each player.
