@@ -23,3 +23,8 @@ fully/at all and available functionality can vary with each player.
 - Volume toggle
 - Shuffle
 - Optional status bar
+
+## Installation
+Using your preferred plugin manager or if all else fails:
+
+`git clone https://github.com/alyosha/vimedia ~/.vim/bundle/vimedia`
