@@ -35,7 +35,7 @@ class Player(Mpris):
         # for example lacks trackid metadata, making Seek impossible.
         # For this reason we hack restart to prioritize universal support.
         self.iface.Previous()
-        sleep(0.3)  # Need to sleep a bit or the Next call will be ignored.
+        sleep(0.5)  # Need to sleep a bit or the Next call will be ignored.
         if self.get_title() == start_track:
             return
         self.iface.Next()
