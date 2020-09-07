@@ -1,6 +1,7 @@
 from mpris import Mpris
 from time import sleep
 import dbus
+import sys
 
 
 class Player(Mpris):
@@ -11,7 +12,10 @@ class Player(Mpris):
         super().__init__(name)
 
     def play(self):
-        self.iface.Play()
+        try:
+            self.iface.Play()
+        except dbus.exceptions.DBusException:
+            print("Must start first song from media player to set the play source")
 
     def pause(self):
         self.iface.Pause()
@@ -53,4 +57,4 @@ class Player(Mpris):
 
     def adjust_volume(self, value):
         current_volume = self.get_property('Volume')
-        self.set_property('Volume', dbus.Double(current_volume + value))
+        self.set_property('Volume', current_volume + value)
