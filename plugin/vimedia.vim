@@ -67,6 +67,13 @@ fu! s:Restart()
   python3 vmd.selected_player.restart()
 endfu
 
+fu! s:Shuffle()
+  if s:selected_player_suffix == ""
+      return
+  endif
+  python3 vmd.selected_player.shuffle()
+endfu
+
 fu! s:ActivePlayer()
   if s:selected_player_suffix != ""
       echom s:selected_player_suffix
@@ -142,6 +149,7 @@ command! -nargs=0 PauseAll call s:Pause(1)
 command! -nargs=0 Skip call s:Skip()
 command! -nargs=0 Prev call s:Previous()
 command! -nargs=0 Restart call s:Restart()
+command! -nargs=0 Shuffle call s:Shuffle()
 command! -nargs=0 Mute call s:Mute()
 command! -nargs=0 Unmute call s:Unmute()
 command! -nargs=0 Vol call s:PresentOptions(s:interaction_type_toggle_volume)

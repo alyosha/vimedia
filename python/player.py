@@ -56,5 +56,13 @@ class Player(Mpris):
         self.set_property('Volume', value)
 
     def adjust_volume(self, value):
-        current_volume = self.get_property('Volume')
-        self.set_property('Volume', current_volume + value)
+        previous_volume = self.get_property('Volume')
+        self.set_property('Volume', previous_volume + value)
+
+    def shuffle(self):
+        try:
+            previous_status = self.get_property('Shuffle')
+            self.set_property('Shuffle', not previous_status)
+            print("Shuffle status: " + ("on" if previous_status == 0 else "off"))
+        except dbus.exceptions.DBusException:
+            print(self.name + " has not implemented Shuffle yet")
