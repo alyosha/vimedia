@@ -1,5 +1,5 @@
 if !has("python3")
-    echom "only supported for vim versions built with python3"
+    echom "vimedia only supported for vim versions built with python3"
     finish
 endif
 

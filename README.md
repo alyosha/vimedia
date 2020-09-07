@@ -2,7 +2,7 @@
 Control your media players from inside Vim, if you're really
 that lazy 😏
 
-## Commands
+## commands
 - `:Play`         => Begin playback from active media player
 - `:Pause`        => Pause playback from active media player
 - `:PauseAll`     => Pause playback from all runing media players
@@ -18,13 +18,15 @@ that lazy 😏
 Please keep in mind that some media players may not have implemented MPRIS
 fully/at all and available functionality can vary with each player.
 
-## Coming soon
+## coming soon
 - Seek forward/backwards
 - Volume toggle
 - Shuffle
 - Optional status bar
 
-## Installation
+## installation
 Using your preferred plugin manager or if all else fails:
 
 `git clone https://github.com/alyosha/vimedia ~/.vim/bundle/vimedia`
+
+You may need to install a newer version of Vim if yours wasn't built with python3.
