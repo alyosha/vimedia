@@ -24,6 +24,10 @@ class Vimedia():
                 continue
             player.pause()
 
-    def adjust_volume_all(self, value):
+    def set_volume_global(self, value):
+        for player in list(map(Player,  get_active_player_names())):
+            player.set_volume(dbus.Double(value))
+
+    def adjust_volume_global(self, value):
         for player in list(map(Player,  get_active_player_names())):
             player.adjust_volume(dbus.Double(value))

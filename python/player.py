@@ -48,5 +48,9 @@ class Player(Mpris):
     def get_metadata(self):
         return self.get_property('Metadata')
 
-    def adjust_volume(self, value):
+    def set_volume(self, value):
         self.set_property('Volume', value)
+
+    def adjust_volume(self, value):
+        current_volume = self.get_property('Volume')
+        self.set_property('Volume', dbus.Double(current_volume + value))

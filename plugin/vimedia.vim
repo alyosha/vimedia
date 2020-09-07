@@ -27,27 +27,7 @@ import util
 vmd = vimedia.Vimedia()
 EOF
 
-" *************************************************************************** "
-" ***************************   Command Bindngs   *************************** " 
-" *************************************************************************** "
-
-command! -nargs=0 Play call s:play()
-command! -nargs=0 Pause call s:pause(0)
-command! -nargs=0 PauseAll call s:pause(1)
-command! -nargs=0 Skip call s:skip()
-command! -nargs=0 Prev call s:previous()
-command! -nargs=0 Restart call s:restart()
-command! -nargs=0 Mute call s:mute()
-command! -nargs=0 Unmute call s:unmute()
-command! -nargs=0 Quit call s:quit()
-command! -nargs=0 ActivePlayer call s:active_player()
-command! -nargs=0 SelectPlayer call s:present_player_options()
-
-" *************************************************************************** "
-" ****************************   Functionality   **************************** " 
-" *************************************************************************** "
-
-fu! s:play()
+fu! s:Play()
   if s:selected_player_suffix == ""
       echom "Please select a media player"
   else
@@ -56,38 +36,38 @@ fu! s:play()
   endif
 endfu
 
-fu! s:pause(all_players)
-  if s:selected_player_suffix == ""
-      echom "Please select a media player"
-  elseif a:all_players
+fu! s:Pause(all_players)
+  if a:all_players
       python3 vmd.pause_all(False)
-   else
+  elseif s:selected_player_suffix == ""
+      echom "Please select a media player"
+  else
       python3 vmd.selected_player.pause()
   endif
 endfu
 
-fu! s:skip()
+fu! s:Skip()
   if s:selected_player_suffix == ""
       return
   endif
   python3 vmd.selected_player.next()
 endfu
 
-fu! s:previous()
+fu! s:Previous()
   if s:selected_player_suffix == ""
       return
   endif
   python3 vmd.selected_player.previous()
 endfu
 
-fu! s:restart()
+fu! s:Restart()
   if s:selected_player_suffix == ""
       return
   endif
   python3 vmd.selected_player.restart()
 endfu
 
-fu! s:active_player()
+fu! s:ActivePlayer()
   if s:selected_player_suffix != ""
       echom s:selected_player_suffix
   else
@@ -95,37 +75,78 @@ fu! s:active_player()
   endif
 endfu
 
-fu! s:present_player_options() abort
-    vnew | exe 'vert resize '.(&columns/4)
-    setl bh=wipe bt=nofile nobl noswf nowrap
-
-    python3 util.update_player_options()
-
-    sil! 0put = s:active_player_names
-    sil! $d_
-    setl noma ro
-
-    nno <silent> <buffer> <nowait> q     :<c-u>close<cr>
-    nno <silent> <buffer> <nowait> <cr>  :<c-u>call <sid>set_selected_player()<cr>
+fu! s:Mute() 
+  python3 vmd.set_volume_global(0.0)
 endfu
 
-fu! s:set_selected_player() abort
+fu! s:Unmute() 
+  python3 vmd.set_volume_global(1.0)
+endfu
+
+fu! s:Quit()
+  python3 vmd.base.quit()
+endfu
+
+let s:interaction_type_select_player = "select_player_interaction"
+let s:interaction_type_toggle_volume = "toggle_volume_interaction"
+
+let s:toggle_volume_opt_up = "Louder"
+let s:toggle_volume_opt_down = "Quieter"
+let s:toggle_volume_opt_done = "Done"
+ 
+let s:toggle_volume_options = [s:toggle_volume_opt_up, s:toggle_volume_opt_down, s:toggle_volume_opt_done]
+
+fu! s:PresentOptions(interaction_type) abort
+    vnew | exe 'vert resize '.(&columns/4)
+    setl bh=wipe bt=nofile nobl noswf nowrap
+    if a:interaction_type == s:interaction_type_select_player
+        python3 util.update_player_options()
+        sil! 0put = s:active_player_names
+        nno <silent> <buffer> <nowait> <cr>  :<c-u>call<sid>SetSelectedPlayer()<cr>
+    elseif a:interaction_type == s:interaction_type_toggle_volume
+        sil! 0put = s:toggle_volume_options
+        nno <silent> <buffer> <nowait> <cr>  :<c-u>call<sid>ToggleVolume()<cr>
+    endif
+
+    sil! $d_
+    setl noma ro
+    nno <silent> <buffer> <nowait> q     :<c-u>close<cr>
+
+endfu
+
+fu! s:SetSelectedPlayer() abort
     let s:selected_player_suffix = expand("<cword>") 
     python3 vmd = vimedia.Vimedia()
     echom "Updated active player" 
     close
 endfu
 
-fu! s:mute() 
-  python3 vmd.adjust_volume_all(0.0)
+fu! s:ToggleVolume() abort
+    let l:selected_opt = expand("<cword>") 
+    if l:selected_opt == s:toggle_volume_opt_up
+        python3 vmd.adjust_volume_global(0.1)
+    elseif l:selected_opt == s:toggle_volume_opt_down
+        python3 vmd.adjust_volume_global(-0.1)
+    elseif l:selected_opt == s:toggle_volume_opt_done
+        close
+    endif
 endfu
 
-fu! s:unmute() 
-  python3 vmd.adjust_volume_all(1.0)
-endfu
+" *************************************************************************** "
+" ***************************   Command Bindngs   *************************** " 
+" *************************************************************************** "
 
-fu! s:quit()
-  python3 vmd.base.quit()
-endfu
+command! -nargs=0 Play call s:Play()
+command! -nargs=0 Pause call s:Pause(0)
+command! -nargs=0 PauseAll call s:Pause(1)
+command! -nargs=0 Skip call s:Skip()
+command! -nargs=0 Prev call s:Previous()
+command! -nargs=0 Restart call s:Restart()
+command! -nargs=0 Mute call s:Mute()
+command! -nargs=0 Unmute call s:Unmute()
+command! -nargs=0 Vol call s:PresentOptions(s:interaction_type_toggle_volume)
+command! -nargs=0 Quit call s:Quit()
+command! -nargs=0 ActivePlayer call s:ActivePlayer()
+command! -nargs=0 SelectPlayer call s:PresentOptions(s:interaction_type_select_player)
 
 let g:vimedia_plugin_loaded = 1

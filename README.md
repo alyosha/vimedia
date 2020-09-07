@@ -11,16 +11,18 @@ that lazy 😏
 - `:Restart`      => Replay current song from the beginning
 - `:Mute`         => Mute audio for all media players
 - `:Unmute`       => Unmute audio for all media players
+- `:Vol`          => Toggle volume louder/quieter
 - `:Quit`         => Send quit signal to active media player
 - `:ActivePlayer` => Confirm active media player
 - `:SelectPlayer` => Select/change active media player from list of all running options
 
 Please keep in mind that some media players may not have implemented MPRIS
-fully/at all and available functionality can vary with each player.
+fully/at all and available functionality can vary with each player. At some point
+I will go through and properly add error messages when certain functionality is
+not supported. 
 
 ## coming soon
 - Seek forward/backwards
-- Volume toggle
 - Shuffle
 - Optional status bar
 
