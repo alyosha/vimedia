@@ -30,6 +30,8 @@ EOF
 let s:interaction_type_select_player = "select_player_interaction"
 let s:interaction_type_toggle_volume = "toggle_volume_interaction"
 
+let s:previous_volume = 1.0
+
 let s:toggle_volume_opt_up = "Louder"
 let s:toggle_volume_opt_down = "Quieter"
 let s:toggle_volume_opt_done = "Done"
@@ -78,7 +80,7 @@ fu! s:Mute() abort
 endfu
 
 fu! s:Unmute() abort
-  python3 vmd.set_volume_global(1.0)
+  python3 vmd.set_volume_global(vim.eval("s:previous_volume"))
 endfu
 
 fu! s:Quit() abort

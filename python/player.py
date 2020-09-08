@@ -1,5 +1,6 @@
 from mpris import Mpris
 from time import sleep
+import vim
 import dbus
 import sys
 
@@ -57,6 +58,7 @@ class Player(Mpris):
 
     def adjust_volume(self, value):
         previous_volume = self.get_property('Volume')
+        vim.command('let s:previous_volume = ' + str(previous_volume))
         self.set_property('Volume', previous_volume + value)
 
     def shuffle(self):
