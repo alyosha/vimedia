@@ -27,7 +27,7 @@ import util
 vmd = vimedia.Vimedia()
 EOF
 
-fu! s:Play()
+fu! s:Play() abort
   if s:selected_player_suffix == ""
       echom "Please select a media player"
   else
@@ -36,7 +36,7 @@ fu! s:Play()
   endif
 endfu
 
-fu! s:Pause(all_players)
+fu! s:Pause(all_players) abort
   if a:all_players
       python3 vmd.pause_all(False)
   elseif s:selected_player_suffix == ""
@@ -46,35 +46,35 @@ fu! s:Pause(all_players)
   endif
 endfu
 
-fu! s:Skip()
+fu! s:Skip() abort
   if s:selected_player_suffix == ""
       return
   endif
   python3 vmd.selected_player.next()
 endfu
 
-fu! s:Previous()
+fu! s:Previous() abort
   if s:selected_player_suffix == ""
       return
   endif
   python3 vmd.selected_player.previous()
 endfu
 
-fu! s:Restart()
+fu! s:Restart() abort
   if s:selected_player_suffix == ""
       return
   endif
   python3 vmd.selected_player.restart()
 endfu
 
-fu! s:Shuffle()
+fu! s:Shuffle() abort
   if s:selected_player_suffix == ""
       return
   endif
   python3 vmd.selected_player.shuffle()
 endfu
 
-fu! s:ActivePlayer()
+fu! s:ActivePlayer() abort
   if s:selected_player_suffix != ""
       echom s:selected_player_suffix
   else
@@ -82,15 +82,15 @@ fu! s:ActivePlayer()
   endif
 endfu
 
-fu! s:Mute() 
+fu! s:Mute() abort
   python3 vmd.set_volume_global(0.0)
 endfu
 
-fu! s:Unmute() 
+fu! s:Unmute() abort
   python3 vmd.set_volume_global(1.0)
 endfu
 
-fu! s:Quit()
+fu! s:Quit() abort
   python3 vmd.base.quit()
 endfu
 
@@ -143,18 +143,18 @@ endfu
 " ***************************   Command Bindngs   *************************** " 
 " *************************************************************************** "
 
-command! -nargs=0 Play call s:Play()
-command! -nargs=0 Pause call s:Pause(0)
-command! -nargs=0 PauseAll call s:Pause(1)
-command! -nargs=0 Skip call s:Skip()
-command! -nargs=0 Prev call s:Previous()
-command! -nargs=0 Restart call s:Restart()
-command! -nargs=0 Shuffle call s:Shuffle()
-command! -nargs=0 Mute call s:Mute()
-command! -nargs=0 Unmute call s:Unmute()
-command! -nargs=0 Vol call s:PresentOptions(s:interaction_type_toggle_volume)
-command! -nargs=0 Quit call s:Quit()
-command! -nargs=0 ActivePlayer call s:ActivePlayer()
-command! -nargs=0 SelectPlayer call s:PresentOptions(s:interaction_type_select_player)
+com! -nargs=0 Play call s:Play()
+com! -nargs=0 Pause call s:Pause(0)
+com! -nargs=0 PauseAll call s:Pause(1)
+com! -nargs=0 Skip call s:Skip()
+com! -nargs=0 Prev call s:Previous()
+com! -nargs=0 Restart call s:Restart()
+com! -nargs=0 Shuffle call s:Shuffle()
+com! -nargs=0 Mute call s:Mute()
+com! -nargs=0 Unmute call s:Unmute()
+com! -nargs=0 Vol call s:PresentOptions(s:interaction_type_toggle_volume)
+com! -nargs=0 Quit call s:Quit()
+com! -nargs=0 ActivePlayer call s:ActivePlayer()
+com! -nargs=0 SelectPlayer call s:PresentOptions(s:interaction_type_select_player)
 
 let g:vimedia_plugin_loaded = 1
