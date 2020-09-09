@@ -47,8 +47,8 @@ class Player(Mpris):
     def restart(self):
         start_track = self.get_title()
         # Not all implementations of MediaPlayer are perfect. Chromium
-        # for example lacks trackid metadata, making Seek impossible.
-        # For this reason we hack restart to prioritize universal support.
+        # for example lacks trackid metadata, making SetPosition impossible.
+        # For this reason we hack temporarily to prioritize universal support.
         self.iface.Previous()
         sleep(0.5)  # Need to sleep a bit or the Next call will be ignored.
         if self.get_title() == start_track:
