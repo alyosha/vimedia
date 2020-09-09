@@ -109,5 +109,5 @@ class Player(Mpris):
             previous_status = self.get_property('Shuffle')
             self.set_property('Shuffle', not previous_status)
             print("Shuffle status: " + ("on" if previous_status == 0 else "off"))
-        except dbus.exceptions.DBusException:
+        except:
             print(self.name + " has not implemented Shuffle yet")
