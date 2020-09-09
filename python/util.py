@@ -36,3 +36,7 @@ def normalize_player_name(dbus_name):
         return CHROMIUM_PATTERN
 
     return name
+
+
+def to_vim_string(val):
+    return '\"' + val + '\"'

@@ -1,4 +1,5 @@
 from mpris import Mpris
+from util import to_vim_string
 from time import sleep
 import vim
 import dbus
@@ -22,18 +23,26 @@ class Player(Mpris):
         self.iface.Pause()
 
     def next(self):
-        self.iface.Next()
+        try:
+            self.iface.Next()
+        except:
+            return
 
     def previous(self):
         start_track = self.get_title()
-        self.iface.Previous()
+        try:
+            self.iface.Previous()
+        except:
+            return
         # Many players will simply restart the song if the position
         # is already past a certain point. We have a dedicated method
         # supporting restart, so make sure to actually go back here.
         sleep(0.5)  # Need to sleep a bit to ensure new metadata has arrived.
         if self.get_title() == start_track:
-            self.iface.Previous()
-            return
+            try:
+                self.iface.Previous()
+            except:
+                return
 
     def restart(self):
         start_track = self.get_title()
@@ -46,20 +55,54 @@ class Player(Mpris):
             return
         self.iface.Next()
 
+    def get_artist(self):
+        metadata = self.get_metadata()
+
+        if metadata != None:
+            try:
+                artist = metadata["xesam:artist"][0]
+            except:
+                return ""
+
+            return str(artist)
+
     def get_title(self):
         metadata = self.get_metadata()
-        return str(metadata["xesam:title"])
+
+        if metadata != None:
+            try:
+                title = metadata["xesam:title"]
+            except:
+                return ""
+
+            return str(title)
 
     def get_metadata(self):
-        return self.get_property('Metadata')
+        try:
+            return self.get_property('Metadata')
+        except:
+            return None
+
+    def refresh_now_playing(self):
+        title = self.get_title()
+        artist = self.get_artist()
+
+        if title == "" or artist == "":
+            return
+
+        vim.command('let s:current_track_name = ' + to_vim_string(title))
+        vim.command('let s:current_artist_name = ' + to_vim_string(artist))
 
     def set_volume(self, value):
         self.set_property('Volume', value)
 
     def adjust_volume(self, value):
         previous_volume = self.get_property('Volume')
-        vim.command('let s:previous_volume = ' + str(previous_volume))
         self.set_property('Volume', previous_volume + value)
+
+        # If these are equal, volume must not be configurable for the player.
+        if self.get_property('Volume') != previous_volume:
+            vim.command('let s:previous_volume = ' + str(previous_volume))
 
     def shuffle(self):
         try:

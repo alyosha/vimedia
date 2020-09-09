@@ -10,8 +10,12 @@ endif
 "" Point to location of python code
 let s:plugin_root_dir = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
-"" Set the users default media player if present
-let s:selected_player_suffix = $DEFAULT_VIMEDIA_PLAYER
+fu! s:init_player_config()
+  let s:selected_player_suffix = $DEFAULT_VIMEDIA_PLAYER
+  let s:selected_player_configured = 0
+endfu
+
+call s:init_player_config()
 
 python3 << EOF
 import sys
@@ -26,6 +30,49 @@ import vimedia
 import util
 vmd = vimedia.Vimedia()
 EOF
+
+" *************************************************************************** "
+" ***********************   Background Functions   ************************** "
+" *************************************************************************** "
+
+let s:current_track_name = "N/A"
+let s:current_artist_name = "N/A"
+
+fu! s:Refresh(timer)
+  if s:selected_player_configured == 0
+    return
+  endif
+
+  python3 vmd.selected_player.refresh_now_playing()
+
+  if s:current_track_name == "N/A" || s:current_artist_name == "N/A"
+    return
+  endif
+
+  set statusline=
+  set statusline+=\%{NowPlayingText()}
+endfu
+
+fu! NowPlayingText()
+  return s:current_track_name . " - " . s:current_artist_name
+endfu
+
+fu! s:CheckPlayerLiveness(timer)
+  if s:selected_player_suffix != "" && !s:selected_player_configured
+    python3 vmd = vimedia.Vimedia()
+  endif
+endfu
+
+"" Check each second to get currently playing track/artist name.
+let timer = timer_start(1000, function('s:Refresh'), {'repeat':-1})
+
+"" Check every ten seconds to auto-detect default player in case it
+"" becomes active at some point after the Vim window has been opened.
+let timer = timer_start(10000, function('s:CheckPlayerLiveness'), {'repeat':-1})
+
+" *************************************************************************** "
+" *************************   Base Functionality   ************************** "
+" *************************************************************************** "
 
 let s:interaction_type_select_player = "select_player_interaction"
 let s:interaction_type_toggle_volume = "toggle_volume_interaction"
@@ -69,7 +116,7 @@ endfu
 
 fu! s:ActivePlayer() abort
   if s:selected_player_suffix != ""
-    echom s:selected_player_suffix
+    echom s:selected_player_configured == 1 ? s:selected_player_suffix : s:selected_player_suffix . " selected but not active"
   else
     echom "No media player configured"
   endif
@@ -85,7 +132,8 @@ endfu
 
 fu! s:Quit() abort
   python3 vmd.base.quit()
-  let s:selected_player_suffix = ""
+  s:init_player_config()
+  set statusline=
 endfu
 
 fu! s:PresentOptions(interaction_type) abort
@@ -125,8 +173,8 @@ fu! s:ToggleVolume() abort
 endfu
 
 fu! s:CheckPlayer(fn, ...) abort
-  if s:selected_player_suffix == ""
-    echom "Please select a media player"
+  if s:selected_player_configured == 0
+    echom "Please select an active media player"
     return
   endif
   call a:fn()

@@ -1,6 +1,11 @@
 ## vimedia                                                                           
 Control your media players from inside Vim, if you're really
-that lazy 😏
+that lazy
+
+![vimedia statusline](statusline.png)
+
+In addition to displaying track/artist information in your statusline, you can also navigate 
+through your media libraries, control volume, etc. using the following commands.
 
 ## Usage
 - `:Play`         => Begin playback from active media player
@@ -31,7 +36,7 @@ from within Vim to get a list of options (remember the players need to be runnin
 
 ## Coming soon
 - Seek forward/backwards
-- Optional status bar
+- Make status bar optional
 
 Suggestions/contributions welcome.
 

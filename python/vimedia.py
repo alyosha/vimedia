@@ -16,6 +16,9 @@ class Vimedia():
         self.base = Base(selected_player_name)
         self.selected_player = Player(selected_player_name)
 
+        if self.selected_player:
+            vim.command('let s:selected_player_configured = ' + str(1))
+
     def pause_all(self, exclude_selected):
         selected_player_name = get_selected_player_name()
 
