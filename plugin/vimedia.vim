@@ -35,8 +35,12 @@ EOF
 " ***********************   Background Functions   ************************** "
 " *************************************************************************** "
 
-let s:current_track_name = "N/A"
-let s:current_artist_name = "N/A"
+fu! s:init_now_playing_config()
+  let s:current_track_name = "N/A"
+  let s:current_artist_name = "N/A"
+endfu
+
+call s:init_now_playing_config()
 
 fu! s:Refresh(timer)
   if s:selected_player_configured == 0
@@ -157,6 +161,8 @@ endfu
 fu! s:SetSelectedPlayer() abort
   let s:selected_player_suffix = expand("<cword>") 
   python3 vmd = vimedia.Vimedia()
+  call s:init_now_playing_config()
+  set statusline=
   echom "Updated active player" 
   close
 endfu
