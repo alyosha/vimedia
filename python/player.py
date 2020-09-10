@@ -13,6 +13,18 @@ class Player(Mpris):
     def __init__(self, name):
         super().__init__(name)
 
+    def refresh_now_playing(self):
+        title = self.get_title()
+        artist = self.get_artist()
+        pos = self.get_position()
+
+        if title == "" or artist == "" or pos == 0:
+            return
+
+        vim.command('let s:current_track_name = ' + to_vim_string(title))
+        vim.command('let s:current_artist_name = ' + to_vim_string(artist))
+        vim.command('let s:ticker_microseconds = ' + str(pos))
+
     def play(self):
         try:
             self.iface.Play()
@@ -34,9 +46,6 @@ class Player(Mpris):
             self.iface.Previous()
         except:
             return
-        # Many players will simply restart the song if the position
-        # is already past a certain point. We have a dedicated method
-        # supporting restart, so make sure to actually go back here.
         sleep(0.5)  # Need to sleep a bit to ensure new metadata has arrived.
         if self.get_title() == start_track:
             try:
@@ -46,14 +55,30 @@ class Player(Mpris):
 
     def restart(self):
         start_track = self.get_title()
-        # Not all implementations of MediaPlayer are perfect. Chromium
-        # for example lacks trackid metadata, making SetPosition impossible.
-        # For this reason we hack temporarily to prioritize universal support.
         self.iface.Previous()
         sleep(0.5)  # Need to sleep a bit or the Next call will be ignored.
         if self.get_title() == start_track:
             return
         self.iface.Next()
+
+    def set_volume(self, value):
+        self.set_property('Volume', value)
+
+    def adjust_volume(self, value):
+        previous_volume = self.get_property('Volume')
+        self.set_property('Volume', previous_volume + value)
+
+        # If these are equal, volume must not be configurable for the player.
+        if self.get_property('Volume') != previous_volume:
+            vim.command('let s:previous_volume = ' + str(previous_volume))
+
+    def shuffle(self):
+        try:
+            previous_status = self.get_property('Shuffle')
+            self.set_property('Shuffle', not previous_status)
+            print("Shuffle status: " + ("on" if previous_status == 0 else "off"))
+        except:
+            print(self.name + " has not implemented Shuffle yet")
 
     def get_artist(self):
         metadata = self.get_metadata()
@@ -77,37 +102,14 @@ class Player(Mpris):
 
             return str(title)
 
+    def get_position(self):
+        try:
+            return int(self.get_property('Position'))
+        except:
+            return 0
+
     def get_metadata(self):
         try:
             return self.get_property('Metadata')
         except:
             return None
-
-    def refresh_now_playing(self):
-        title = self.get_title()
-        artist = self.get_artist()
-
-        if title == "" or artist == "":
-            return
-
-        vim.command('let s:current_track_name = ' + to_vim_string(title))
-        vim.command('let s:current_artist_name = ' + to_vim_string(artist))
-
-    def set_volume(self, value):
-        self.set_property('Volume', value)
-
-    def adjust_volume(self, value):
-        previous_volume = self.get_property('Volume')
-        self.set_property('Volume', previous_volume + value)
-
-        # If these are equal, volume must not be configurable for the player.
-        if self.get_property('Volume') != previous_volume:
-            vim.command('let s:previous_volume = ' + str(previous_volume))
-
-    def shuffle(self):
-        try:
-            previous_status = self.get_property('Shuffle')
-            self.set_property('Shuffle', not previous_status)
-            print("Shuffle status: " + ("on" if previous_status == 0 else "off"))
-        except:
-            print(self.name + " has not implemented Shuffle yet")

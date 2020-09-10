@@ -1,6 +1,6 @@
 from player import Player
 from base import Base
-from util import get_selected_player_name, get_active_player_names
+from util import get_selected_player_name, get_active_player_names, to_vim_string
 import vim
 import dbus
 

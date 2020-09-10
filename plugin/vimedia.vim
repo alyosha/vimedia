@@ -38,6 +38,7 @@ EOF
 fu! s:init_now_playing_config()
   let s:current_track_name = "N/A"
   let s:current_artist_name = "N/A"
+  let s:ticker_microseconds = 0
 endfu
 
 call s:init_now_playing_config()
@@ -55,10 +56,19 @@ fu! s:Refresh(timer)
 
   set statusline=
   set statusline+=\%{NowPlayingText()}
+  set statusline+=%=
+  set statusline+=\%{PlaybackTicker()}
 endfu
 
 fu! NowPlayingText()
   return s:current_track_name . " - " . s:current_artist_name
+endfu
+
+fu! PlaybackTicker()
+  let l:pos_seconds = s:ticker_microseconds / 1000000
+  let l:min = l:pos_seconds / 60
+  let l:sec = l:pos_seconds - (l:min * 60)
+  return l:min . ":" . (l:sec > 9 ? l:sec : ("0" . l:sec))
 endfu
 
 fu! s:CheckPlayerLiveness(timer)
@@ -136,7 +146,7 @@ endfu
 
 fu! s:Quit() abort
   python3 vmd.base.quit()
-  s:init_player_config()
+  call s:init_player_config()
   set statusline=
 endfu
 
