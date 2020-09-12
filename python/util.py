@@ -1,6 +1,4 @@
 import dbus
-import vim
-import re
 
 MPRIS_PREFIX = "org.mpris.MediaPlayer2."
 CHROMIUM_PATTERN = "chromium"
@@ -11,22 +9,15 @@ def get_active_player_names():
     return list(filter(lambda name: name.startswith(MPRIS_PREFIX), names))
 
 
-def get_selected_player_name():
-    selected_service_suffix = vim.eval('s:selected_player_suffix')
-
-    if selected_service_suffix == "":
+def get_selected_player_name(selected_player_suffix):
+    if selected_player_suffix == "":
         return ""
 
-    for active_service_name in get_active_player_names():
-        if selected_service_suffix in active_service_name:
-            return active_service_name
+    for active_player_name in get_active_player_names():
+        if selected_player_suffix in active_player_name:
+            return active_player_name
 
     return ""
-
-
-def update_player_options():
-    options = list(map(normalize_player_name, get_active_player_names()))
-    vim.command('let s:active_player_names = ' + str(options))
 
 
 def normalize_player_name(dbus_name):

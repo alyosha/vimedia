@@ -5,6 +5,7 @@ import dbus
 class Mpris():
 
     def __init__(self, name):
+        self.system_name = name
         self.name = normalize_player_name(name)
         self.bus = dbus.SessionBus(private=True)
         self.dbus_object = self.bus.get_object(name, "/org/mpris/MediaPlayer2")

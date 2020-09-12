@@ -39,25 +39,42 @@ fu! s:init_now_playing_config()
   let s:current_track_name = "N/A"
   let s:current_artist_name = "N/A"
   let s:ticker_microseconds = 0
+  let s:quit_in_progress = 0
 endfu
 
 call s:init_now_playing_config()
+
+fu! GetPositionCallback(channel, msg)
+  if a:msg == "0" || s:quit_in_progress == 1
+    return
+  endif
+  let s:ticker_microseconds = a:msg
+endfu
+
+fu! GetTitleCallback(channel, msg)
+  if a:msg == "" || s:quit_in_progress == 1
+    return
+  endif
+  let s:current_track_name = a:msg
+endfu
+
+fu! GetArtistCallback(channel, msg)
+  if a:msg == "" || s:quit_in_progress == 1
+    return
+  endif
+  let s:current_artist_name = a:msg
+endfu
 
 fu! s:Refresh(timer)
   if s:selected_player_configured == 0
     return
   endif
 
-  python3 vmd.selected_player.refresh_now_playing()
-
-  if s:current_track_name == "N/A" || s:current_artist_name == "N/A"
-    return
-  endif
-
-  set statusline=
-  set statusline+=\%{NowPlayingText()}
-  set statusline+=%=
-  set statusline+=\%{PlaybackTicker()}
+  "" DBus system calls will block if not processed as jobs, so we
+  "" update the now playing properties via async shell script execution.
+  call job_start(s:plugin_root_dir . '/jobs/get_position ' . s:dest, {"out_cb": "GetPositionCallback"})
+  call job_start(s:plugin_root_dir . '/jobs/get_title ' . s:dest, {"out_cb": "GetTitleCallback"})
+  call job_start(s:plugin_root_dir . '/jobs/get_artist ' . s:dest, {"out_cb": "GetArtistCallback"})
 endfu
 
 fu! NowPlayingText()
@@ -71,18 +88,22 @@ fu! PlaybackTicker()
   return l:min . ":" . (l:sec > 9 ? l:sec : ("0" . l:sec))
 endfu
 
-fu! s:CheckPlayerLiveness(timer)
-  if s:selected_player_suffix != "" && !s:selected_player_configured
-    python3 vmd = vimedia.Vimedia()
+fu! s:UpdateStatusline(timer)
+  if s:current_track_name == "N/A" || s:current_artist_name == "N/A"
+    return
   endif
+
+  set statusline=
+  set statusline+=\%{NowPlayingText()}
+  set statusline+=%=
+  set statusline+=\%{PlaybackTicker()}
 endfu
 
-"" Check each second to get currently playing track/artist name.
-let timer = timer_start(1000, function('s:Refresh'), {'repeat':-1})
+"" Refresh track/artist name and playback ticker every half-second (async)
+let timer = timer_start(500, function('s:Refresh'), {'repeat':-1})
 
-"" Check every ten seconds to auto-detect default player in case it
-"" becomes active at some point after the Vim window has been opened.
-let timer = timer_start(10000, function('s:CheckPlayerLiveness'), {'repeat':-1})
+"" Update the status line each second with the latest playback info
+let timer = timer_start(1000, function('s:UpdateStatusline'), {'repeat':-1})
 
 " *************************************************************************** "
 " *************************   Base Functionality   ************************** "
@@ -145,9 +166,11 @@ fu! s:Unmute() abort
 endfu
 
 fu! s:Quit() abort
+  let s:quit_in_progress = 1
   python3 vmd.base.quit()
   call s:init_player_config()
   set statusline=
+  let s:quit_in_progress = 0
 endfu
 
 fu! s:PresentOptions(interaction_type) abort
@@ -155,7 +178,7 @@ fu! s:PresentOptions(interaction_type) abort
   setl bh=wipe bt=nofile nobl noswf nowrap
 
   if a:interaction_type == s:interaction_type_select_player
-    python3 util.update_player_options()
+    python3 vmd.update_player_options()
     sil! 0put = s:active_player_names
     nno <silent> <buffer> <nowait> <cr>  :<c-u>call<sid>SetSelectedPlayer()<cr>
   elseif a:interaction_type == s:interaction_type_toggle_volume

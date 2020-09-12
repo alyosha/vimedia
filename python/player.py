@@ -1,9 +1,7 @@
 from mpris import Mpris
-from util import to_vim_string
 from time import sleep
 import vim
 import dbus
-import sys
 
 
 class Player(Mpris):
@@ -12,18 +10,6 @@ class Player(Mpris):
 
     def __init__(self, name):
         super().__init__(name)
-
-    def refresh_now_playing(self):
-        title = self.get_title()
-        artist = self.get_artist()
-        pos = self.get_position()
-
-        if title == "" or artist == "" or pos == 0:
-            return
-
-        vim.command('let s:current_track_name = ' + to_vim_string(title))
-        vim.command('let s:current_artist_name = ' + to_vim_string(artist))
-        vim.command('let s:ticker_microseconds = ' + str(pos))
 
     def play(self):
         try:
@@ -43,12 +29,14 @@ class Player(Mpris):
     def previous(self):
         start_track = self.get_title()
         try:
+            self.set_volume(dbus.Double(0.0))
             self.iface.Previous()
         except:
             return
         sleep(0.5)  # Need to sleep a bit to ensure new metadata has arrived.
         if self.get_title() == start_track:
             try:
+                self.set_volume(dbus.Double(vim.eval("s:previous_volume")))
                 self.iface.Previous()
             except:
                 return
@@ -80,17 +68,6 @@ class Player(Mpris):
         except:
             print(self.name + " has not implemented Shuffle yet")
 
-    def get_artist(self):
-        metadata = self.get_metadata()
-
-        if metadata != None:
-            try:
-                artist = metadata["xesam:artist"][0]
-            except:
-                return ""
-
-            return str(artist)
-
     def get_title(self):
         metadata = self.get_metadata()
 
@@ -101,12 +78,6 @@ class Player(Mpris):
                 return ""
 
             return str(title)
-
-    def get_position(self):
-        try:
-            return int(self.get_property('Position'))
-        except:
-            return 0
 
     def get_metadata(self):
         try:

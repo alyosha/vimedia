@@ -1,0 +1,9 @@
+#!/bin/bash
+
+dbus-send \
+--print-reply \
+--dest=$1 \
+/org/mpris/MediaPlayer2 \
+org.freedesktop.DBus.Properties.Get \
+string:'org.mpris.MediaPlayer2.Player' \
+string:'Position' | sed -n -e 's/^.*int64 //p'
