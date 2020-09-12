@@ -7,6 +7,8 @@ if exists('g:vimedia_plugin_loaded')
     finish
 endif
 
+set timeout timeoutlen=1000 ttimeoutlen=0
+
 "" Point to location of python code
 let s:plugin_root_dir = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
@@ -27,7 +29,6 @@ python_root_dir = normpath(join(plugin_root_dir, '..', 'python'))
 sys.path.insert(0, python_root_dir)
 
 import vimedia
-import util
 vmd = vimedia.Vimedia()
 EOF
 
@@ -101,7 +102,6 @@ endfu
 
 "" Refresh track/artist name and playback ticker every half-second (async)
 let timer = timer_start(500, function('s:Refresh'), {'repeat':-1})
-
 "" Update the status line each second with the latest playback info
 let timer = timer_start(1000, function('s:UpdateStatusline'), {'repeat':-1})
 
