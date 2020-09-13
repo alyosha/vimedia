@@ -4,6 +4,7 @@ dbus-send \
 --print-reply \
 --dest=$1 \
 /org/mpris/MediaPlayer2 \
-org.freedesktop.DBus.Properties.Get \
+org.freedesktop.DBus.Properties.Set \
 string:'org.mpris.MediaPlayer2.Player' \
-string:'Position' | sed -n -e 's/^.*int64 //p'
+string:$2 \
+variant:$3:$4

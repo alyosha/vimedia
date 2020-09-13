@@ -1,0 +1,25 @@
+#!/bin/bash
+
+case $2 in
+"Volume")
+    sed_pattern="/double/{s/[[:alpha:]-]//g;s/^\s*//g;p}"
+    ;;
+"Shuffle")
+    sed_pattern="/boolean/{s/variant//g;s/boolean//g;s/^\s*//g;p}"
+    ;;
+"Position")
+    sed_pattern="s/^.*int64 //p"
+    ;;
+esac
+
+if [ -z "$sed_pattern" ]; then
+    exit 1
+fi
+
+dbus-send \
+--print-reply \
+--dest=$1 \
+/org/mpris/MediaPlayer2 \
+org.freedesktop.DBus.Properties.Get \
+string:'org.mpris.MediaPlayer2.Player' \
+string:$2 | sed -ne "$sed_pattern"

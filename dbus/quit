@@ -1,0 +1,7 @@
+#!/bin/bash
+
+dbus-send --session \
+--dest=$1 \
+--print-reply \
+/org/mpris/MediaPlayer2 \
+org.mpris.MediaPlayer2.Quit

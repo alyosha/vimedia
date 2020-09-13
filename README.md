@@ -5,7 +5,8 @@ that lazy
 ![vimedia statusline](statusline.png)
 
 In addition to displaying track/artist information in your statusline, you can also navigate 
-through your media libraries, control volume, etc. using the following commands.
+through your media libraries, control volume, etc. using the following commands. Still slightly
+experimental until all base functionality has been implemented.
 
 ## Usage
 - `:Play`         => Begin playback from active media player
@@ -13,7 +14,6 @@ through your media libraries, control volume, etc. using the following commands.
 - `:PauseAll`     => Pause playback from all running media players
 - `:Skip`         => Skip to next song
 - `:Prev`         => Go back to previous song
-- `:Restart`      => Replay current song from the beginning
 - `:Shuffle`      => Toggle shuffle for the media player
 - `:Mute`         => Mute audio for all media players
 - `:Unmute`       => Unmute audio for all media players
@@ -36,6 +36,8 @@ from within Vim to get a list of options (remember the players need to be runnin
 
 ## Coming soon
 - Seek forward/backwards
+- Restart
+- Hard previous (instead of just restarting when playback is past a certain point)
 - Make status bar optional
 
 Suggestions/contributions welcome.
@@ -44,5 +46,3 @@ Suggestions/contributions welcome.
 Using your preferred plugin manager or if all else fails:
 
 `git clone https://github.com/alyosha/vimedia ~/.vim/bundle/vimedia`
-
-You may need to install a newer version of Vim if yours wasn't built with python3.

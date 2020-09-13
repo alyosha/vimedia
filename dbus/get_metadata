@@ -1,0 +1,22 @@
+#!/bin/bash
+
+case $2 in
+"Title")
+    sed_pattern="/title/{n;s/string //;s/variant//;s/\"//g;s/^\s*//g;p}"
+    ;;
+"Artist")
+    sed_pattern="/artist/{n;n;s/string //;s/\"//g;s/^\s*//g;p}"
+    ;;
+esac
+
+if [ -z "$sed_pattern" ]; then
+    exit 1
+fi
+
+dbus-send \
+--print-reply \
+--dest=$1 \
+/org/mpris/MediaPlayer2 \
+org.freedesktop.DBus.Properties.Get \
+string:'org.mpris.MediaPlayer2.Player' \
+string:'Metadata' | sed -ne "$sed_pattern"
