@@ -27,18 +27,25 @@ MPRIS properly/at all so available functionality can vary. At some point I will 
 through and properly add debug messages where functionality is not supported, but 
 for now I've just tried to cover those places that throw errors when unavailable.
 
-Throw an env like the following in your .zshrc/.bashrc to configure your preferred default player:
+Rhythmbox is an example of a fully-implemented player, while a player like chromium 
+is still very limited in terms of supported functionality.
 
-`export DEFAULT_VIMEDIA_PLAYER=chromium`
+## Config
+To configure a default media player, add a line like the following to your
+vimrc dotfile:
+
+`let g:vimedia_default_player = "rhythmbox"`
 
 If you're unsure of the name to set here, try opening the media player and running `:SelectPlayer` 
 from within Vim to get a list of options (remember the players need to be running/active to detect).
 
+By default the statusline is enabled and will show playback metadata when
+available, but you can disable the statusline in the following way:
+
+`let g:vimedia_statusline_enabled = 0`
+
 ## Coming soon
 - Seek forward/backwards
-- Restart
-- Hard previous (instead of just restarting when playback is past a certain point)
-- Make status bar optional
 
 Suggestions/contributions welcome.
 

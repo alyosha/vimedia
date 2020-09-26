@@ -9,6 +9,10 @@ endif
 
 set timeout timeoutlen=1000 ttimeoutlen=0
 
+if !exists('g:vimedia_statusline_enabled')
+  let g:vimedia_statusline_enabled = 1
+endif
+
 let s:plugin_root_dir = fnamemodify(resolve(expand('<sfile>:p:h')), ':h')
 
 " *************************************************************************** "
@@ -181,6 +185,10 @@ fu! PlaybackTicker()
 endfu
 
 fu! s:UpdateStatusline(timer)
+  if g:vimedia_statusline_enabled == 0
+    return
+  endif
+
   if s:selected_player == "N/A" || s:current_artist_name == "N/A" || s:current_track_name == "N/A"
     return
   endif
@@ -201,7 +209,12 @@ let timer = timer_start(1000, function('s:UpdateStatusline'), {'repeat':-1})
 " *************************************************************************** "
 
 fu! s:init_player_config()
-  let s:selected_player_abbrev = $DEFAULT_VIMEDIA_PLAYER
+  let s:selected_player_abbrev = ""
+
+  if exists('g:vimedia_default_player')
+    let s:selected_player_abbrev = g:vimedia_default_player
+  endif
+
   let s:selected_player = "N/A"
 
   call job_start(s:GetActivePlayersCmd(), {"out_cb": function("s:SetPlayerCallback")})
