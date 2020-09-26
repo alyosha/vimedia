@@ -34,7 +34,8 @@ is still very limited in terms of supported functionality.
 For players that support the `Seek` command, `Prev` will return to the previous
 track regardless of the position of the current track. If `Seek` is not
 supported, `Prev` will only return to the previous track if the command is
-called within the first few seconds of playback (default MPRIS behavior).
+called within the first few seconds of playback, otherwise it will restart
+the current track (default MPRIS behavior).
 
 ## Config
 To configure a default media player, add a line like the following to your
