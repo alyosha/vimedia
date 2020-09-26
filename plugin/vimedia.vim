@@ -85,6 +85,8 @@ fu! s:SetPlayerCallback(channel, msg)
       let s:selected_player = player
     endif
   endfor
+
+  call job_start(s:GetVolumeCmd(s:selected_player), {"out_cb": function("s:GetVolumeCallback")})
 endfu
 
 fu! s:GetPositionCallback(channel, msg)
@@ -124,6 +126,10 @@ endfu
 
 fu! s:UnmuteCallback(channel, msg)
   call s:SetVolumeAll(a:msg, s:previous_volume)
+endfu
+
+fu! s:GetVolumeCallback(channel, msg)
+  let s:previous_volume = str2float(a:msg)
 endfu
 
 fu! s:ShuffleCallback(channel, msg)
@@ -229,8 +235,6 @@ call s:init_player_config()
 let s:interaction_type_select_player = "select_player_interaction"
 let s:interaction_type_toggle_volume = "toggle_volume_interaction"
 
-let s:previous_volume = 1.0
-
 let s:toggle_volume_opt_up = "Louder"
 let s:toggle_volume_opt_down = "Quieter"
 let s:toggle_volume_opt_done = "Done"
@@ -288,17 +292,18 @@ endfu
 
 fu! s:ToggleVolume() abort
   let l:selected_opt = expand("<cword>") 
+
   if l:selected_opt == s:toggle_volume_opt_up
     let l:next_volume = s:previous_volume + 0.1
-    let s:previous_volume = l:next_volume
-    call job_start(s:SetVolumeCmd(s:selected_player, l:next_volume))
   elseif l:selected_opt == s:toggle_volume_opt_down
     let l:next_volume = s:previous_volume - 0.1
-    let s:previous_volume = l:next_volume
-    call job_start(s:SetVolumeCmd(s:selected_player, l:next_volume))
   elseif l:selected_opt == s:toggle_volume_opt_done
     close
   endif
+
+  echo l:next_volume
+  let s:previous_volume = l:next_volume
+  call job_start(s:SetVolumeCmd(s:selected_player, l:next_volume))
 endfu
 
 fu! s:AdjustVolume() abort
