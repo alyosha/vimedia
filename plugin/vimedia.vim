@@ -67,6 +67,10 @@ fu! s:PreviousCmd(player)
   return s:plugin_root_dir . '/dbus/control_playback ' . a:player . ' Previous'
 endfu
 
+fu! s:SeekCmd(player, duration)
+  return s:plugin_root_dir . '/dbus/seek ' . a:player . ' ' . a:duration
+endfu
+
 fu! s:QuitCmd(player)
   return s:plugin_root_dir . '/dbus/quit ' . a:player
 endfu
@@ -259,6 +263,11 @@ fu! s:Previous() abort
   call job_start(s:PreviousCmd(s:selected_player))
 endfu
 
+fu! s:Seek(duration_seconds) abort
+  let l:duration_microseconds = a:duration_seconds * 1000000
+  call job_start(s:SeekCmd(s:selected_player, l:duration_microseconds))
+endfu
+
 fu! s:Shuffle() abort
   call job_start(s:GetShuffleCmd(s:selected_player), {"out_cb": function("s:ShuffleCallback")})
 endfu
@@ -334,12 +343,17 @@ fu! s:SetSelectedPlayer() abort
   close
 endfu
 
-fu! s:CheckPlayer(fn) abort
+fu! s:CheckPlayer(fn, ...) abort
   if s:selected_player == "N/A"
     echom "Please select an active media player"
     return
   endif
-  call a:fn()
+
+  if a:0 == 1
+    call a:fn(a:1)
+  else
+    call a:fn()
+  endif
 endfu
 
 " *************************************************************************** "
@@ -351,6 +365,7 @@ com! -nargs=0 Play call s:CheckPlayer(function("s:Play"))
 com! -nargs=0 Pause call s:CheckPlayer(function("s:Pause"))
 com! -nargs=0 Skip call s:CheckPlayer(function("s:Skip"))
 com! -nargs=0 Prev call s:CheckPlayer(function("s:Previous"))
+com! -nargs=1 Seek call s:CheckPlayer(function("s:Seek"), <args>)
 com! -nargs=0 Restart call s:CheckPlayer(function("s:Restart"))
 com! -nargs=0 Shuffle call s:CheckPlayer(function("s:Shuffle"))
 com! -nargs=0 Vol call s:CheckPlayer(function("s:AdjustVolume"))

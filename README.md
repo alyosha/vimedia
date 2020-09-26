@@ -9,18 +9,19 @@ through your media libraries, control volume, etc. using the following commands.
 experimental until all base functionality has been implemented.
 
 ## Usage
-- `:Play`         => Begin playback from active media player
-- `:Pause`        => Pause playback from active media player
-- `:PauseAll`     => Pause playback from all running media players
-- `:Skip`         => Skip to next song
-- `:Prev`         => Go back to previous song
-- `:Shuffle`      => Toggle shuffle for the media player
-- `:Mute`         => Mute audio for all media players
-- `:Unmute`       => Unmute audio for all media players
-- `:Vol`          => Toggle volume louder/quieter
-- `:Quit`         => Send quit signal to active media player
-- `:ActivePlayer` => Confirm active media player
-- `:SelectPlayer` => Select/change active media player from list of all running options
+- `:Play`            => Begin playback from active media player
+- `:Pause`           => Pause playback from active media player
+- `:PauseAll`        => Pause playback from all running media players
+- `:Skip`            => Skip to next song
+- `:Prev`            => Go back to previous song
+- `:Seek {duration}` => Seek forward/backward `x` seconds
+- `:Shuffle`         => Toggle shuffle for the media player
+- `:Mute`            => Mute audio for all media players
+- `:Unmute`          => Unmute audio for all media players
+- `:Vol`             => Toggle volume louder/quieter
+- `:Quit`            => Send quit signal to active media player
+- `:ActivePlayer`    => Confirm active media player
+- `:SelectPlayer`    => Select/change active media player from list of all running options
 
 Please keep in mind that individual media players are responsible for implementing 
 MPRIS properly/at all so available functionality can vary. At some point I will go 
@@ -44,9 +45,7 @@ available, but you can disable the statusline in the following way:
 
 `let g:vimedia_statusline_enabled = 0`
 
-## Coming soon
-- Seek forward/backwards
-
+## Contributions
 Suggestions/contributions welcome.
 
 ## Installation
