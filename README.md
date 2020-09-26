@@ -15,6 +15,7 @@ experimental until all base functionality has been implemented.
 - `:Skip`            => Skip to next song
 - `:Prev`            => Go back to previous song
 - `:Seek {duration}` => Seek forward/backward `x` seconds
+- `:Restart`         => Seek to beginning of current track
 - `:Shuffle`         => Toggle shuffle for the media player
 - `:Mute`            => Mute audio for all media players
 - `:Unmute`          => Unmute audio for all media players

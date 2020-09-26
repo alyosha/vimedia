@@ -215,6 +215,10 @@ fu! s:Seek(duration_seconds) abort
   call job_start(s:SeekCmd(s:selected_player, l:duration_microseconds))
 endfu
 
+fu! s:Restart() abort
+  call job_start(s:SeekCmd(s:selected_player, -1 * s:ticker_microseconds))
+endfu
+
 fu! s:Shuffle() abort
   call job_start(s:GetPropertyCmd(s:selected_player, "Shuffle"), {"out_cb": function("s:ShuffleCallback")})
 endfu

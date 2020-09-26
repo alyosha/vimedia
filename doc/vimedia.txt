@@ -45,6 +45,9 @@ COMMANDS                                                  *vimedia-commands*
 :Seek {duration}                                                    *:Seek*
   Seek backward/forward for the specified duration (unit = seconds).
 
+:Restart                                                         *:Restart*
+  Seek to begining of current song.
+
 :Shuffle                                                         *:Shuffle*
   Toggle shuffle status for the active media player.
 
