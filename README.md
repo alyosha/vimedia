@@ -5,8 +5,7 @@ that lazy
 ![vimedia statusline](statusline.png)
 
 In addition to displaying track/artist information in your statusline, you can also navigate 
-through your media libraries, control volume, etc. using the following commands. Still slightly
-experimental until all base functionality has been implemented.
+through your media libraries, control volume, etc. using the following commands.
 
 ## Usage
 - `:Play`            => Begin playback from active media player
