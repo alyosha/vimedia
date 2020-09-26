@@ -4,7 +4,7 @@ case $2 in
 "Volume")
     sed_pattern="/double/{s/[[:alpha:]-]//g;s/^\s*//g;p}"
     ;;
-"Shuffle")
+"Shuffle"|"CanSeek")
     sed_pattern="/boolean/{s/variant//g;s/boolean//g;s/^\s*//g;p}"
     ;;
 "Position")

@@ -52,7 +52,7 @@ fu! s:QuitCmd(player)
 endfu
 
 " *************************************************************************** "
-" **********************   D-Bus Command Callbacks   ************************ "
+" *************************   Command Callbacks   *************************** "
 " *************************************************************************** "
 
 fu! s:SetPlayerCallback(channel, msg)
@@ -94,6 +94,18 @@ endfu
 
 fu! s:PauseAllCallback(channel, msg)
   call s:PauseAllPlayers(a:msg)
+endfu
+
+fu! s:PreviousCallback(channel, msg)
+  if a:msg == "true"
+    call job_start(s:SeekCmd(s:selected_player, -1 * s:ticker_microseconds), {"callback": function("s:SeekStartCallback")})
+  else
+    call job_start(s:ControlPlaybackCmd(s:selected_player, "Previous"))
+  endif
+endfu
+
+fu! s:SeekStartCallback(channel, msg)
+  call job_start(s:ControlPlaybackCmd(s:selected_player, "Previous"))
 endfu
 
 fu! s:MuteCallback(channel, msg)
@@ -138,7 +150,7 @@ fu! s:QuitCallback(channel, msg)
 endfu
 
 " *************************************************************************** "
-" **************************   Timer Functions   **************************** "
+" *************************   Base Functionality   ************************** "
 " *************************************************************************** "
 
 fu! s:init_now_playing_config()
@@ -148,51 +160,6 @@ fu! s:init_now_playing_config()
 endfu
 
 call s:init_now_playing_config()
-
-fu! s:Refresh(timer)
-  if s:selected_player == "N/A"
-    return
-  endif
-
-  call job_start(s:GetPropertyCmd(s:selected_player, "Position"), {"out_cb": function("s:GetPositionCallback")})
-  call job_start(s:GetMetadataCmd(s:selected_player, "Title"), {"out_cb": function("s:GetTitleCallback")})
-  call job_start(s:GetMetadataCmd(s:selected_player, "Artist"), {"out_cb": function("s:GetArtistCallback")})
-endfu
-
-fu! NowPlayingText()
-  return s:current_track_name . " - " . s:current_artist_name
-endfu
-
-fu! PlaybackTicker()
-  let l:pos_seconds = s:ticker_microseconds / 1000000
-  let l:min = l:pos_seconds / 60
-  let l:sec = l:pos_seconds - (l:min * 60)
-  return l:min . ":" . (l:sec > 9 ? l:sec : ("0" . l:sec))
-endfu
-
-fu! s:UpdateStatusline(timer)
-  if g:vimedia_statusline_enabled == 0
-    return
-  endif
-
-  if s:selected_player == "N/A" || s:current_artist_name == "N/A" || s:current_track_name == "N/A"
-    return
-  endif
-
-  set statusline=
-  set statusline+=\%{NowPlayingText()}
-  set statusline+=%=
-  set statusline+=\%{PlaybackTicker()}
-endfu
-
-"" Refresh track/artist name and playback ticker every half-second
-let timer = timer_start(500, function('s:Refresh'), {'repeat':-1})
-"" Update the status line each second with the latest playback info 
-let timer = timer_start(1000, function('s:UpdateStatusline'), {'repeat':-1})
-
-" *************************************************************************** "
-" *************************   Base Functionality   ************************** "
-" *************************************************************************** "
 
 fu! s:init_player_config()
   let s:selected_player_abbrev = ""
@@ -240,7 +207,7 @@ fu! s:Skip() abort
 endfu
 
 fu! s:Previous() abort
-  call job_start(s:ControlPlaybackCmd(s:selected_player, "Previous"))
+  call job_start(s:GetPropertyCmd(s:selected_player, "CanSeek"), {"out_cb": function("s:PreviousCallback")})
 endfu
 
 fu! s:Seek(duration_seconds) abort
@@ -346,6 +313,51 @@ fu! s:CheckPlayer(fn, ...) abort
     call a:fn()
   endif
 endfu
+
+" *************************************************************************** "
+" **************************   Timer Functions   **************************** "
+" *************************************************************************** "
+
+fu! s:Refresh(timer)
+  if s:selected_player == "N/A"
+    return
+  endif
+
+  call job_start(s:GetPropertyCmd(s:selected_player, "Position"), {"out_cb": function("s:GetPositionCallback")})
+  call job_start(s:GetMetadataCmd(s:selected_player, "Title"), {"out_cb": function("s:GetTitleCallback")})
+  call job_start(s:GetMetadataCmd(s:selected_player, "Artist"), {"out_cb": function("s:GetArtistCallback")})
+endfu
+
+fu! NowPlayingText()
+  return s:current_track_name . " - " . s:current_artist_name
+endfu
+
+fu! PlaybackTicker()
+  let l:pos_seconds = s:ticker_microseconds / 1000000
+  let l:min = l:pos_seconds / 60
+  let l:sec = l:pos_seconds - (l:min * 60)
+  return l:min . ":" . (l:sec > 9 ? l:sec : ("0" . l:sec))
+endfu
+
+fu! s:UpdateStatusline(timer)
+  if g:vimedia_statusline_enabled == 0
+    return
+  endif
+
+  if s:selected_player == "N/A" || s:current_artist_name == "N/A" || s:current_track_name == "N/A"
+    return
+  endif
+
+  set statusline=
+  set statusline+=\%{NowPlayingText()}
+  set statusline+=%=
+  set statusline+=\%{PlaybackTicker()}
+endfu
+
+"" Refresh track/artist name and playback ticker every half-second
+let timer = timer_start(500, function('s:Refresh'), {'repeat':-1})
+"" Update the status line each second with the latest playback info
+let timer = timer_start(1000, function('s:UpdateStatusline'), {'repeat':-1})
 
 " *************************************************************************** "
 " ***************************   Command Bindngs   *************************** " 
