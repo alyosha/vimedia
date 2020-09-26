@@ -259,7 +259,6 @@ fu! s:ToggleVolume() abort
     return
   endif
 
-  echo l:next_volume
   let s:previous_volume = l:next_volume
   call job_start(s:SetVolumeCmd(s:selected_player, l:next_volume))
 endfu
