@@ -294,9 +294,19 @@ fu! s:ToggleVolume() abort
   let l:selected_opt = expand("<cword>") 
 
   if l:selected_opt == s:toggle_volume_opt_up
-    let l:next_volume = s:previous_volume + 0.1
+    let l:next = s:previous_volume + 0.1
+    if l:next > 0.9
+      let l:next_volume = 1.0
+    else
+      let l:next_volume = l:next
+    endif
   elseif l:selected_opt == s:toggle_volume_opt_down
-    let l:next_volume = s:previous_volume - 0.1
+    let l:next = s:previous_volume - 0.1
+    if l:next < 0.1
+      let l:next_volume = 0.0
+    else
+      let l:next_volume = l:next
+    endif
   elseif l:selected_opt == s:toggle_volume_opt_done
     close
   endif
