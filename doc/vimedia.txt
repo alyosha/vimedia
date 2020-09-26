@@ -1,11 +1,74 @@
- ___      ___  __     ___      ___   _______  ________   __          __      
-|"  \    /"  ||" \   |"  \    /"  | /"     "||"      "\ |" \        /""\     
- \   \  //  / ||  |   \   \  //   |(: ______)(.  ___  :)||  |      /    \    
-  \\  \/. ./  |:  |   /\\  \/.    | \/    |  |: \   ) |||:  |     /' /\  \   
-   \.    //   |.  |  |: \.        | // ___)_ (| (___\ |||.  |    //  __'  \  
-    \\   /    /\  |\ |.  \    /:  |(:      "||:       :)/\  |\  /   /  \\  \ 
-     \__/    (__\_|_)|___|\__/|___| \_______)(________/(__\_|_)(___/    \___)
+*vimedia* *vimedia.txt* control media players from Vim via MPRIS D-Bus interface
+ ___      ___  __     ___      ___   _______  ________   __          __       ~
+|"  \    /"  ||" \   |"  \    /"  | /"     "||"      "\ |" \        /""\      ~
+ \   \  //  / ||  |   \   \  //   |(: ______)(.  ___  :)||  |      /    \     ~
+  \\  \/. ./  |:  |   /\\  \/.    | \/    |  |: \   ) |||:  |     /' /\  \    ~
+   \.    //   |.  |  |: \.        | // ___)_ (| (___\ |||.  |    //  __'  \   ~
+    \\   /    /\  |\ |.  \    /:  |(:      "||:       :)/\  |\  /   /  \\  \  ~
+     \__/    (__\_|_)|___|\__/|___| \_______)(________/(__\_|_)(___/    \___) ~
 
 
+=============================================================================
+CONTENTS                                                  *vimedia-contents*
 
-WIP
+   01. Intro ............................................... |vimedia-intro|
+   02. Commands ......................................... |vimedia-commands|
+   03. Contributions ............................... |vimedia-contributions|
+   04. License ........................................... |vimedia-license|
+
+=============================================================================
+INTRODUCTION                                                 *vimedia-intro*
+
+vimedia is a tool that allows you to control various media players via the
+MPRIS D-Bus interface. You can learn more about MPRIS at the following link:
+
+https://specifications.freedesktop.org/mpris-spec/2.2/index.html#Interfaces
+
+=============================================================================
+COMMANDS                                                  *vimedia-commands*
+
+:Play                                                               *:Play*
+  Begin playback from active media player.
+
+:Pause                                                             *:Pause*
+  Pause playback from active media player.
+
+:PauseAll                                                       *:PauseAll*
+  Pause playback from all running media players.
+
+:Skip                                                               *:Skip*
+  Skip to next song.
+
+:Prev                                                               *:Prev*
+  Go back to previous song.
+
+:Shuffle                                                         *:Shuffle*
+  Toggle shuffle status for the active media player.
+
+:Mute                                                               *:Mute*
+  Mute audio for all media players.
+
+:Unmute                                                           *:Unmute*
+  Unmute audio for all media players.
+
+:Vol                                                                 *:Vol*
+  Toggle volume louder/quieter.
+
+:Quit                                                               *:Quit*
+  Send quit signal to active media player.
+
+:ActivePlayer                                               *:ActivePlayer*
+  Confirm active media player.
+
+:SelectPlayer                                               *:SelectPlayer*
+  Select/change active media player.
+
+=============================================================================
+CONTRIBUTIONS                                        *vimedia-contributions*
+
+Contributions and suggestions are very welcome, feel free to send a PR over.
+
+=============================================================================
+LICENSE                                                    *vimedia-license*
+
+MIT License. Copyright © 2020 Stephen Johnson
