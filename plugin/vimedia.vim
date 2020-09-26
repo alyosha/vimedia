@@ -252,6 +252,7 @@ fu! s:ToggleVolume() abort
     endif
   elseif l:selected_opt == s:toggle_volume_opt_done
     close
+    return
   endif
 
   echo l:next_volume
