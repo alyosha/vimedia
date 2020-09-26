@@ -20,59 +20,35 @@ let s:plugin_root_dir = fnamemodify(resolve(expand('<sfile>:p:h')), ':h')
 " *************************************************************************** "
 
 fu! s:GetActivePlayersCmd()
-  return s:plugin_root_dir . '/dbus/get_active_players'
+  return s:plugin_root_dir . "/dbus/get_active_players"
 endfu
 
-fu! s:GetArtistCmd(player)
-  return s:plugin_root_dir . '/dbus/get_metadata ' . a:player . " Artist"
+fu! s:GetMetadataCmd(player, attribute)
+  return s:plugin_root_dir . "/dbus/get_metadata " . a:player . " " . a:attribute
 endfu
 
-fu! s:GetTitleCmd(player)
-  return s:plugin_root_dir . '/dbus/get_metadata ' . a:player . " Title"
-endfu
-
-fu! s:GetPositionCmd(player)
-  return s:plugin_root_dir . '/dbus/get_property ' . a:player . ' Position'
-endfu 
-
-fu! s:GetShuffleCmd(player)
-  return s:plugin_root_dir . '/dbus/get_property ' . a:player . ' Shuffle'
-endfu
-
-fu! s:GetVolumeCmd(player)
-  return s:plugin_root_dir . '/dbus/get_property ' . a:player . ' Volume'
+fu! s:GetPropertyCmd(player, property)
+  return s:plugin_root_dir . "/dbus/get_property " . a:player . " " . a:property
 endfu
 
 fu! s:SetVolumeCmd(player, volume)
-  return s:plugin_root_dir . '/dbus/set_property ' . a:player . ' Volume double ' . string(a:volume)
+  return s:plugin_root_dir . "/dbus/set_property " . a:player . " Volume double " . string(a:volume)
 endfu
 
 fu! s:SetShuffleCmd(player, shuffle_status)
-  return s:plugin_root_dir . '/dbus/set_property ' . a:player . ' Shuffle boolean ' . a:shuffle_status
+  return s:plugin_root_dir . "/dbus/set_property " . a:player . " Shuffle boolean " . a:shuffle_status
 endfu
 
-fu! s:PlayCmd(player)
-  return s:plugin_root_dir . '/dbus/control_playback ' . a:player . ' Play'
-endfu
-
-fu! s:PauseCmd(player)
-  return s:plugin_root_dir . '/dbus/control_playback ' . a:player . ' Pause'
-endfu
-
-fu! s:NextCmd(player)
-  return s:plugin_root_dir . '/dbus/control_playback ' . a:player . ' Next'
-endfu
-
-fu! s:PreviousCmd(player)
-  return s:plugin_root_dir . '/dbus/control_playback ' . a:player . ' Previous'
+fu! s:ControlPlaybackCmd(player, action)
+  return s:plugin_root_dir . "/dbus/control_playback " . a:player . " " . a:action
 endfu
 
 fu! s:SeekCmd(player, duration)
-  return s:plugin_root_dir . '/dbus/seek ' . a:player . ' ' . a:duration
+  return s:plugin_root_dir . "/dbus/seek " . a:player . " " . a:duration
 endfu
 
 fu! s:QuitCmd(player)
-  return s:plugin_root_dir . '/dbus/quit ' . a:player
+  return s:plugin_root_dir . "/dbus/quit " . a:player
 endfu
 
 " *************************************************************************** "
@@ -86,7 +62,7 @@ fu! s:SetPlayerCallback(channel, msg)
     endif
   endfor
 
-  call job_start(s:GetVolumeCmd(s:selected_player), {"out_cb": function("s:GetVolumeCallback")})
+  call job_start(s:GetPropertyCmd(s:selected_player, "Volume"), {"out_cb": function("s:GetVolumeCallback")})
 endfu
 
 fu! s:GetPositionCallback(channel, msg)
@@ -113,7 +89,7 @@ endfu
 fu! s:PlayCallback(channel, msg)
   call s:PauseAllPlayers(a:msg)
   sleep 5m
-  call job_start(s:PlayCmd(s:selected_player))
+  call job_start(s:ControlPlaybackCmd(s:selected_player, "Play"))
 endfu
 
 fu! s:PauseAllCallback(channel, msg)
@@ -178,9 +154,9 @@ fu! s:Refresh(timer)
     return
   endif
 
-  call job_start(s:GetPositionCmd(s:selected_player), {"out_cb": function("s:GetPositionCallback")})
-  call job_start(s:GetTitleCmd(s:selected_player), {"out_cb": function("s:GetTitleCallback")})
-  call job_start(s:GetArtistCmd(s:selected_player), {"out_cb": function("s:GetArtistCallback")})
+  call job_start(s:GetPropertyCmd(s:selected_player, "Position"), {"out_cb": function("s:GetPositionCallback")})
+  call job_start(s:GetMetadataCmd(s:selected_player, "Title"), {"out_cb": function("s:GetTitleCallback")})
+  call job_start(s:GetMetadataCmd(s:selected_player, "Artist"), {"out_cb": function("s:GetArtistCallback")})
 endfu
 
 fu! NowPlayingText()
@@ -243,7 +219,7 @@ let s:toggle_volume_options = [s:toggle_volume_opt_up, s:toggle_volume_opt_down,
 
 fu! s:PauseAllPlayers(players_str)
   for player in split(a:players_str, ",")
-    call job_start(s:PauseCmd(player))
+    call job_start(s:ControlPlaybackCmd(player, "Pause"))
   endfor
 endfu
 
@@ -252,7 +228,7 @@ fu! s:Play() abort
 endfu
 
 fu! s:Pause() abort
-  call job_start(s:PauseCmd(s:selected_player))
+  call job_start(s:ControlPlaybackCmd(s:selected_player, "Pause"))
 endfu
 
 fu! s:PauseAll() abort
@@ -260,11 +236,11 @@ fu! s:PauseAll() abort
 endfu
 
 fu! s:Skip() abort
-  call job_start(s:NextCmd(s:selected_player))
+  call job_start(s:ControlPlaybackCmd(s:selected_player, "Next"))
 endfu
 
 fu! s:Previous() abort
-  call job_start(s:PreviousCmd(s:selected_player))
+  call job_start(s:ControlPlaybackCmd(s:selected_player, "Previous"))
 endfu
 
 fu! s:Seek(duration_seconds) abort
@@ -273,7 +249,7 @@ fu! s:Seek(duration_seconds) abort
 endfu
 
 fu! s:Shuffle() abort
-  call job_start(s:GetShuffleCmd(s:selected_player), {"out_cb": function("s:ShuffleCallback")})
+  call job_start(s:GetPropertyCmd(s:selected_player, "Shuffle"), {"out_cb": function("s:ShuffleCallback")})
 endfu
 
 fu! s:ActivePlayer() abort
