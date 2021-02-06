@@ -1,8 +1,3 @@
-if !has("python3")
-  echom "vimedia only supported for vim versions built with python3"
-  finish
-endif
-
 if exists('g:vimedia_plugin_loaded')
   finish
 endif
