@@ -185,40 +185,40 @@ fu! s:PauseAllPlayers(players_str)
   endfor
 endfu
 
-fu! s:Play() abort
+fu! s:Play()
   call job_start(s:GetActivePlayersCmd(), {"out_cb": function("s:PlayCallback")})
 endfu
 
-fu! s:Pause() abort
+fu! s:Pause()
   call job_start(s:ControlPlaybackCmd(s:selected_player, "Pause"))
 endfu
 
-fu! s:PauseAll() abort
+fu! s:PauseAll()
   call job_start(s:GetActivePlayersCmd(), {"out_cb": function("s:PauseAllCallback")})
 endfu
 
-fu! s:Skip() abort
+fu! s:Skip()
   call job_start(s:ControlPlaybackCmd(s:selected_player, "Next"))
 endfu
 
-fu! s:Previous() abort
+fu! s:Previous()
   call job_start(s:GetPropertyCmd(s:selected_player, "CanSeek"), {"out_cb": function("s:PreviousCallback")})
 endfu
 
-fu! s:Seek(duration_seconds) abort
+fu! s:Seek(duration_seconds)
   let l:duration_microseconds = a:duration_seconds * 1000000
   call job_start(s:SeekCmd(s:selected_player, l:duration_microseconds))
 endfu
 
-fu! s:Restart() abort
+fu! s:Restart()
   call job_start(s:SeekCmd(s:selected_player, -1 * s:ticker_microseconds))
 endfu
 
-fu! s:Shuffle() abort
+fu! s:Shuffle()
   call job_start(s:GetPropertyCmd(s:selected_player, "Shuffle"), {"out_cb": function("s:ShuffleCallback")})
 endfu
 
-fu! s:ActivePlayer() abort
+fu! s:ActivePlayer()
   if s:selected_player_abbrev != ""
     echom s:selected_player != "N/A" ? s:selected_player_abbrev : s:selected_player_abbrev . " selected but not active"
   else
@@ -226,13 +226,13 @@ fu! s:ActivePlayer() abort
   endif
 endfu
 
-fu! s:SetVolumeAll(players_str, volume) abort
+fu! s:SetVolumeAll(players_str, volume)
   for player in split(a:players_str, ",")
     call job_start(s:SetVolumeCmd(s:selected_player, a:volume))
   endfor
 endfu
 
-fu! s:ToggleVolume() abort
+fu! s:ToggleVolume()
   let l:selected_opt = expand("<cword>") 
 
   if l:selected_opt == s:toggle_volume_opt_up
@@ -258,23 +258,23 @@ fu! s:ToggleVolume() abort
   call job_start(s:SetVolumeCmd(s:selected_player, l:next_volume))
 endfu
 
-fu! s:AdjustVolume() abort
+fu! s:AdjustVolume()
   call s:PresentOptions(s:interaction_type_toggle_volume)
 endfu
 
-fu! s:Mute() abort
+fu! s:Mute()
  call job_start(s:GetActivePlayersCmd(), {"out_cb": function("s:MuteCallback")})
 endfu
 
-fu! s:Unmute() abort
+fu! s:Unmute()
  call job_start(s:GetActivePlayersCmd(), {"out_cb": function("s:UnmuteCallback")})
 endfu
 
-fu! s:Quit() abort
+fu! s:Quit()
   call job_start(s:QuitCmd(s:selected_player), {"out_cb": function("s:QuitCallback")})
 endfu
 
-fu! s:PresentOptions(interaction_type) abort
+fu! s:PresentOptions(interaction_type)
   vnew | exe 'vert resize '.(&columns/4)
   setl bh=wipe bt=nofile nobl noswf nowrap
 
@@ -291,7 +291,7 @@ fu! s:PresentOptions(interaction_type) abort
   nno <silent> <buffer> <nowait> q :<c-u>close<cr>
 endfu
 
-fu! s:SetSelectedPlayer() abort
+fu! s:SetSelectedPlayer()
   let s:selected_player_abbrev = expand("<cword>") 
   call job_start(s:GetActivePlayersCmd(), {"out_cb": function("s:SetPlayerCallback")})
   call s:init_now_playing_config()
@@ -300,7 +300,7 @@ fu! s:SetSelectedPlayer() abort
   close
 endfu
 
-fu! s:CheckPlayer(fn, ...) abort
+fu! s:CheckPlayer(fn, ...)
   if s:selected_player == "N/A"
     echom "Please select an active media player"
     return
