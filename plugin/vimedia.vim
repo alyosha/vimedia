@@ -335,6 +335,9 @@ fu! PlaybackTicker()
   let l:pos_seconds = s:ticker_microseconds / 1000000
   let l:min = l:pos_seconds / 60
   let l:sec = l:pos_seconds - (l:min * 60)
+  if l:min == 0 && l:sec == 0
+   return ''
+  endif
   return l:min . ":" . (l:sec > 9 ? l:sec : ("0" . l:sec))
 endfu
 
